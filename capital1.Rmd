@@ -26,7 +26,8 @@ list_packages <- list
 new.packages <- list_packages[!(list_packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
-sapply(list, require, character.only = TRUE)
+R<-suppressWarnings(suppressMessages(sapply(list, require, character.only = TRUE)))
+
 
 
 ```
@@ -55,7 +56,7 @@ The  September 2015 data green taxi  contains 1048575  rows  and      21 columns
 #==================================================================
 
 data=readr::read_csv("C:/Users/Gucci148/Documents/DataMiningscience/Capitalone/green_tripdata_2015-09.csv")
-
+data=datatable::fread("C:/Users/Gucci148/Documents/DataMiningscience/Capitalone/green_tripdata_2015-09.csv")
 names(data)
 
 dim(data)
@@ -799,6 +800,10 @@ newdata %>%dplyr::select( Week,Speed)%>%lm(formula = Speed ~ factor(Week ))%>%an
 A plausible Hypothesis would be to test if speed is associated with time of the day.This can be done by building a Linear regression model.
  There exist a significant association between Speed and Hour of the day. The coefficient of Hours is negative which indicates a negative relationship between the two variables. For every unit increase in Hour of the day,the 
  Speed decreases by a factor of about 0.106343.
+ 
+```{r}
+plot_ly(newdata, x = ~Hours, y = ~Speed, name = '', type = 'scatter', mode = 'markers')
+```
 
 
 ```{r}
@@ -806,6 +811,7 @@ ggplot(newdata, aes(Hours, Speed))+geom_point(color="purple")+
   ggtitle('Hours vs Speed')+
   xlab('Hours')+ylab('Speed')+
   stat_smooth(method=lm, colour='black',span=0.2)
+
 
 ```
 
@@ -837,6 +843,12 @@ glance(fit_glm)
 ```
 
 
+```{r}
+p=newdata %>%dplyr::select(  Hours,Speed)%>%mutate( Hours=as.numeric( Hours))%>%group_by(Hours)%>%
+  dplyr::summarise(mean_speed=mean(Speed))
+
+plot_ly(p, x = ~Hours, y = ~mean_speed, name = '', type = 'scatter', mode = 'lines')
+```
 
 
 
